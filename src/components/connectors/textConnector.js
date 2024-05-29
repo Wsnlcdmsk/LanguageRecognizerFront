@@ -134,6 +134,7 @@ const TextConnector = () => {
               onKeyDown={handleKeyDown}
               required
             />
+            <div style ={{margin: '5px', padding: '5px'}}/>
             <Chips
               value={tags.map((tag) => tag.name)}
               onChange={(newTagNames) =>
@@ -183,6 +184,7 @@ const TextConnector = () => {
                 fullWidth
                 defaultValue={text.language.name}
               />
+              <div style ={{margin: '1px', padding: '1px'}}/>
               <Chips
                 value={editingTags.map((tag) => tag.name)}
                 onChange={(newTagNames) =>
@@ -197,7 +199,7 @@ const TextConnector = () => {
                 color="error"
                 onClick={() => handleDelete(text.id)}
                 disabled={isLoading}
-                style={{ marginRight: '8px' }}
+                style={{ margin: '8px' }}
               >
                 Delete
               </Button>
@@ -220,7 +222,7 @@ const TextConnector = () => {
           ))}
         </Paper>
         <Footer>
-          <p>&copy; 2023 Определитель языка текста. Все права защищены.</p>
+          <p>&copy; 2024 Определитель языка текста. Все права защищены.</p>
         </Footer>
       </Container>
     </ThemeProvider>
