@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import {Paper} from '@mui/material';
+import API_URL from '../../config';
+
 
 const theme = createTheme({
   palette: {
@@ -91,7 +93,7 @@ const SearchPage = () => {
 
   const fetchTagList = async () => {
     try {
-      const response = await fetch(`http://localhost:8080/api/v1/text/findTextSortedByTag/${tagSearchText}`);
+      const response = await fetch(`${API_URL}http://localhost:8080/api/v1/text/findTextSortedByTag/${tagSearchText}`);
       if (response.ok) {
         const data = await response.json();
         setTagList(data);
@@ -105,7 +107,7 @@ const SearchPage = () => {
 
   const fetchLanguageList = async () => {
     try {
-      const response = await fetch(`http://localhost:8080/api/v1/text/findTextSortedByLanguage/${languageSearchText}`);
+      const response = await fetch(`${API_URL}http://localhost:8080/api/v1/text/findTextSortedByLanguage/${languageSearchText}`);
       if (response.ok) {
         const data = await response.json();
         setLanguageList(data);
@@ -119,7 +121,7 @@ const SearchPage = () => {
 
   const fetchContentList = async () => {
     try {
-      const response = await fetch(`http://localhost:8080/api/v1/text/getTextByContent/${contentSearchText}`);
+      const response = await fetch(`${API_URL}http://localhost:8080/api/v1/text/getTextByContent/${contentSearchText}`);
       if (response.ok) {
         const data = await response.json();
         setContent(data.content);

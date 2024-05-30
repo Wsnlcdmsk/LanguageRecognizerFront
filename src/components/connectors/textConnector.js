@@ -3,6 +3,8 @@ import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { Container, Paper, Box, TextField, Button, CircularProgress } from '@mui/material';
 import Chips from 'react-chips';
 import styled from 'styled-components';
+import API_URL from '../../config';
+
 
 const theme = createTheme({
   palette: {
@@ -50,7 +52,7 @@ const TextConnector = () => {
     const text = { content, language, tags };
     console.log(text);
     try {
-      await fetch('http://localhost:8080/api/v1/text/saveText', {
+      await fetch(`${API_URL}/http://localhost:8080/api/v1/text/saveText`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(text),
@@ -69,7 +71,7 @@ const TextConnector = () => {
   const handleDelete = async (id) => {
     setIsLoading(true);
     try {
-      await fetch(`http://localhost:8080/api/v1/text/delete/${id}`, {
+      await fetch(`${API_URL}http://localhost:8080/api/v1/text/delete/${id}`, {
         method: 'DELETE',
       });
       console.log('Text deleted');
@@ -84,7 +86,7 @@ const TextConnector = () => {
   const handleUpdate = async (text) => {
     setIsLoading(true);
     try {
-      await fetch('http://localhost:8080/api/v1/text/update', {
+      await fetch(`${API_URL}http://localhost:8080/api/v1/text/update`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ ...text, tags: editingTags }),
@@ -101,7 +103,7 @@ const TextConnector = () => {
   };
 
   React.useEffect(() => {
-    fetch('http://localhost:8080/api/v1/text/getTexts')
+    fetch(`${API_URL}http://localhost:8080/api/v1/text/getTexts`)
       .then((res) => res.json())
       .then((result) => {
         setTexts(result);

@@ -9,7 +9,7 @@ EXPOSE 3000
 
 COPY ["package.json", "package-lock.json*", "./"]
 
-RUN npm install --legacy-peer-deps flag
+RUN npm install --legacy-peer-deps
 
 COPY . .
 
