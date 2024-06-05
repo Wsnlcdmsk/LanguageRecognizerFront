@@ -52,7 +52,7 @@ export default function Appbar() {
           >
             <MenuItem onClick={() => handleClose('home')}>Home</MenuItem>
             <MenuItem onClick={() => handleClose('text')}>Text</MenuItem>
-            <MenuItem onClick={() => handleClose('search')}>Serch</MenuItem>
+            <MenuItem onClick={() => handleClose('search')}>Search</MenuItem>
           </Menu>
           <Typography variant="h6" noWrap sx={{ flexGrow: 1, textAlign: 'center' }}>
             Language Recognizer

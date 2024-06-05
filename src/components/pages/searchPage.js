@@ -65,9 +65,9 @@ const Footer = styled.footer`
 const SearchPage = () => {
   const [tagList, setTagList] = useState([]);
   const [languageList, setLanguageList] = useState([]);
-  const [content, setContent] = useState('');
-  const [language, setLanguage] = useState({ name: '' });
-  const [tags, setTags] = useState([]);
+  const [content, setContent] = React.useState('');
+  const [language, setLanguage] = React.useState(null);
+  const [tags, setTags] = React.useState([]);
   const [tagSearchText, setTagSearchText] = useState('');
   const [languageSearchText, setLanguageSearchText] = useState('');
   const [contentSearchText, setContentSearchText] = useState('');
@@ -124,8 +124,8 @@ const SearchPage = () => {
       if (response.ok) {
         const data = await response.json();
         setContent(data.content);
-        setLanguage(data.language);
-        setTags(data.tags);
+        setLanguage(data.language || {});
+        setTags(data.tags || []);
       } else {
         console.error(`Error: ${response.status} - ${response.statusText}`);
       }
@@ -188,8 +188,8 @@ const SearchPage = () => {
         </InputGroup>
         <ul>
           <ListItem>Content: {content}</ListItem>
-          <ListItem>Language: {language.name}</ListItem>
-          <ListItem>Tags: {tags.map((tag) => tag.name).join(', ')}</ListItem>
+          <ListItem>Language: {language ? language.name : ''}</ListItem>
+          <ListItem>Tags: {tags.length > 0 ? tags.map((tag) => tag.name).join(', ') : ''}</ListItem>
         </ul>
       </Paper>
       <Footer>

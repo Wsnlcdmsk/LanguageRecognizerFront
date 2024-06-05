@@ -169,8 +169,8 @@ const TextConnector = () => {
               key={text.id}
             >
               <p>Content: {text.content}</p>
-              <p>Language: {text.language.name}</p>
-              <p>Tags: {text.tags.map((tag) => tag.name).join(', ')}</p>
+              <p>Language: {text.language ? text.language.name : ''}</p>
+              <p>Tags: {text.tags ? text.tags.map((tag) => tag.name).join(', ') : ''}</p>
               <TextField
                 id={`update-content-${text.id}`}
                 label="Update Content"
@@ -183,7 +183,7 @@ const TextConnector = () => {
                 label="Update Language"
                 variant="standard"
                 fullWidth
-                defaultValue={text.language.name}
+                defaultValue={text.language ? text.language.name : ''}
               />
               <div style={{ margin: '1px', padding: '1px' }} />
               <Chips
