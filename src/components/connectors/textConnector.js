@@ -5,7 +5,6 @@ import Chips from 'react-chips';
 import styled from 'styled-components';
 import API_URL from '../../config';
 
-
 const theme = createTheme({
   palette: {
     primary: {
@@ -52,7 +51,7 @@ const TextConnector = () => {
     const text = { content, language, tags };
     console.log(text);
     try {
-      await fetch(`${API_URL}/http://localhost:8080/api/v1/text/saveText`, {
+      await fetch(`${API_URL}/api/v1/text/saveText`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(text),
@@ -71,7 +70,7 @@ const TextConnector = () => {
   const handleDelete = async (id) => {
     setIsLoading(true);
     try {
-      await fetch(`${API_URL}http://localhost:8080/api/v1/text/delete/${id}`, {
+      await fetch(`${API_URL}/api/v1/text/delete/${id}`, {
         method: 'DELETE',
       });
       console.log('Text deleted');
@@ -86,7 +85,7 @@ const TextConnector = () => {
   const handleUpdate = async (text) => {
     setIsLoading(true);
     try {
-      await fetch(`${API_URL}http://localhost:8080/api/v1/text/update`, {
+      await fetch(`${API_URL}/api/v1/text/update`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ ...text, tags: editingTags }),
@@ -103,7 +102,7 @@ const TextConnector = () => {
   };
 
   React.useEffect(() => {
-    fetch(`${API_URL}http://localhost:8080/api/v1/text/getTexts`)
+    fetch(`${API_URL}/api/v1/text/getTexts`)
       .then((res) => res.json())
       .then((result) => {
         setTexts(result);
@@ -136,7 +135,7 @@ const TextConnector = () => {
               onKeyDown={handleKeyDown}
               required
             />
-            <div style ={{margin: '5px', padding: '5px'}}/>
+            <div style={{ margin: '5px', padding: '5px' }} />
             <Chips
               value={tags.map((tag) => tag.name)}
               onChange={(newTagNames) =>
@@ -186,7 +185,7 @@ const TextConnector = () => {
                 fullWidth
                 defaultValue={text.language.name}
               />
-              <div style ={{margin: '1px', padding: '1px'}}/>
+              <div style={{ margin: '1px', padding: '1px' }} />
               <Chips
                 value={editingTags.map((tag) => tag.name)}
                 onChange={(newTagNames) =>

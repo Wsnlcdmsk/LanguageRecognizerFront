@@ -1,9 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
-import {Paper} from '@mui/material';
+import { Paper } from '@mui/material';
 import API_URL from '../../config';
-
 
 const theme = createTheme({
   palette: {
@@ -66,9 +65,9 @@ const Footer = styled.footer`
 const SearchPage = () => {
   const [tagList, setTagList] = useState([]);
   const [languageList, setLanguageList] = useState([]);
-  const [content, setContent] = React.useState('');
-  const [language, setLanguage] = React.useState({ name: '' });
-  const [tags, setTags] = React.useState([]);
+  const [content, setContent] = useState('');
+  const [language, setLanguage] = useState({ name: '' });
+  const [tags, setTags] = useState([]);
   const [tagSearchText, setTagSearchText] = useState('');
   const [languageSearchText, setLanguageSearchText] = useState('');
   const [contentSearchText, setContentSearchText] = useState('');
@@ -93,7 +92,7 @@ const SearchPage = () => {
 
   const fetchTagList = async () => {
     try {
-      const response = await fetch(`${API_URL}http://localhost:8080/api/v1/text/findTextSortedByTag/${tagSearchText}`);
+      const response = await fetch(`${API_URL}/api/v1/text/findTextSortedByTag/${tagSearchText}`);
       if (response.ok) {
         const data = await response.json();
         setTagList(data);
@@ -107,7 +106,7 @@ const SearchPage = () => {
 
   const fetchLanguageList = async () => {
     try {
-      const response = await fetch(`${API_URL}http://localhost:8080/api/v1/text/findTextSortedByLanguage/${languageSearchText}`);
+      const response = await fetch(`${API_URL}/api/v1/text/findTextSortedByLanguage/${languageSearchText}`);
       if (response.ok) {
         const data = await response.json();
         setLanguageList(data);
@@ -121,7 +120,7 @@ const SearchPage = () => {
 
   const fetchContentList = async () => {
     try {
-      const response = await fetch(`${API_URL}http://localhost:8080/api/v1/text/getTextByContent/${contentSearchText}`);
+      const response = await fetch(`${API_URL}/api/v1/text/getTextByContent/${contentSearchText}`);
       if (response.ok) {
         const data = await response.json();
         setContent(data.content);
@@ -147,17 +146,17 @@ const SearchPage = () => {
             onKeyPress={(event) => handleKeyPress(event, fetchTagList)}
             placeholder="Search by tag..."
           />
-          <button onClick={fetchTagList}  >Find</button>
+          <button onClick={fetchTagList}>Find</button>
         </InputGroup>
         <ul>
           {tagList.map((content, index) => (
             <ListItem key={index}>{content}</ListItem>
           ))}
         </ul>
-        </Paper>
+      </Paper>
 
       <Paper elevation={3} style={{ padding: '50px 20px', width: 600, margin: '20px auto' }}>
-        <h1  style={{ color: theme.palette.primary.main }}>Text List Sorted by Language</h1>
+        <h1 style={{ color: theme.palette.primary.main }}>Text List Sorted by Language</h1>
         <InputGroup>
           <input
             type="text"
@@ -173,10 +172,10 @@ const SearchPage = () => {
             <ListItem key={index}>{content}</ListItem>
           ))}
         </ul>
-        </Paper>
+      </Paper>
 
       <Paper elevation={3} style={{ padding: '50px 20px', width: 600, margin: '20px auto' }}>
-        <h1  style={{ color: theme.palette.primary.main }}>Text List by Content</h1>
+        <h1 style={{ color: theme.palette.primary.main }}>Text List by Content</h1>
         <InputGroup>
           <input
             type="text"
@@ -192,8 +191,8 @@ const SearchPage = () => {
           <ListItem>Language: {language.name}</ListItem>
           <ListItem>Tags: {tags.map((tag) => tag.name).join(', ')}</ListItem>
         </ul>
-        </Paper>
-        <Footer>
+      </Paper>
+      <Footer>
         <p>&copy; 2024 Определитель языка текста. Все права защищены.</p>
       </Footer>
     </Container>
