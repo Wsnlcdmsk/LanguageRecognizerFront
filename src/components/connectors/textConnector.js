@@ -22,7 +22,7 @@ const Footer = styled.footer`
 
 const TextConnector = () => {
   const [content, setContent] = React.useState('');
-  const [language, setLanguage] = React.useState({ name: '' });
+  const [language, setLanguage] = React.useState('');
   const [tags, setTags] = React.useState([]);
   const [texts, setTexts] = React.useState([]);
   const [isLoading, setIsLoading] = React.useState(false);
@@ -30,13 +30,11 @@ const TextConnector = () => {
 
   const handleTagAdd = (tagName) => {
     const newTag = { name: tagName };
-    setEditingTags([...editingTags, newTag]);
+    setEditingTags((prevTags) => [...prevTags, newTag]);
   };
 
   const handleTagDelete = (index) => {
-    const newTags = [...editingTags];
-    newTags.splice(index, 1);
-    setEditingTags(newTags);
+    setEditingTags((prevTags) => prevTags.filter((_, i) => i !== index));
   };
 
   const handleKeyDown = (e) => {
@@ -48,17 +46,15 @@ const TextConnector = () => {
   const handleClick = async (e) => {
     e.preventDefault();
     setIsLoading(true);
-    const text = { content, language, tags };
-    console.log(text);
+    const text = { content, language: { name: language }, tags };
     try {
       await fetch(`${API_URL}/api/v1/text/saveText`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(text),
       });
-      console.log('New Text added');
       setContent('');
-      setLanguage({ name: '' });
+      setLanguage('');
       setTags([]);
     } catch (error) {
       console.error('Error saving text:', error);
@@ -73,8 +69,7 @@ const TextConnector = () => {
       await fetch(`${API_URL}/api/v1/text/delete/${id}`, {
         method: 'DELETE',
       });
-      console.log('Text deleted');
-      setTexts(texts.filter((text) => text.id !== id));
+      setTexts((prevTexts) => prevTexts.filter((text) => text.id !== id));
     } catch (error) {
       console.error('Error deleting text:', error);
     } finally {
@@ -90,9 +85,8 @@ const TextConnector = () => {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ ...text, tags: editingTags }),
       });
-      console.log('Text updated');
-      setTexts(
-        texts.map((t) => (t.id === text.id ? { ...t, tags: editingTags } : t))
+      setTexts((prevTexts) =>
+        prevTexts.map((t) => (t.id === text.id ? { ...t, tags: editingTags } : t))
       );
     } catch (error) {
       console.error('Error updating text:', error);
@@ -102,12 +96,20 @@ const TextConnector = () => {
   };
 
   React.useEffect(() => {
-    fetch(`${API_URL}/api/v1/text/getTexts`)
-      .then((res) => res.json())
-      .then((result) => {
+    const fetchTexts = async () => {
+      try {
+        const response = await fetch(`${API_URL}/api/v1/text/getTexts`);
+        const result = await response.json();
         setTexts(result);
-      });
+      } catch (error) {
+        console.error('Error fetching texts:', error);
+      }
+    };
+
+    fetchTexts();
   }, []);
+
+  const memoizedTexts = React.useMemo(() => texts, [texts]);
 
   return (
     <ThemeProvider theme={theme}>
@@ -130,8 +132,8 @@ const TextConnector = () => {
               label="Language"
               variant="standard"
               fullWidth
-              value={language.name}
-              onChange={(e) => setLanguage({ name: e.target.value })}
+              value={language}
+              onChange={(e) => setLanguage(e.target.value)}
               onKeyDown={handleKeyDown}
               required
             />
@@ -157,7 +159,7 @@ const TextConnector = () => {
         </Paper>
         <Paper elevation={3} style={{ padding: '50px 20px', width: 600, margin: '20px auto' }}>
           <h1 style={{ color: theme.palette.primary.main }}>Texts</h1>
-          {texts.map((text) => (
+          {memoizedTexts.map((text) => (
             <Paper
               elevation={6}
               style={{

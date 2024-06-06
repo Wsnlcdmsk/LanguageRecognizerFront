@@ -1,7 +1,6 @@
-import React, { useState, useEffect } from 'react';
-import styled from 'styled-components';
-import { createTheme, ThemeProvider } from '@mui/material/styles';
-import { Paper } from '@mui/material';
+import React, { useState, useCallback } from 'react';
+import styled, { ThemeProvider } from 'styled-components';
+import { createTheme, Paper } from '@mui/material';
 import API_URL from '../../config';
 
 const theme = createTheme({
@@ -65,24 +64,40 @@ const Footer = styled.footer`
 const SearchPage = () => {
   const [tagList, setTagList] = useState([]);
   const [languageList, setLanguageList] = useState([]);
-  const [content, setContent] = React.useState('');
-  const [language, setLanguage] = React.useState(null);
-  const [tags, setTags] = React.useState([]);
+  const [contentData, setContentData] = useState({ content: '', language: {}, tags: [] });
   const [tagSearchText, setTagSearchText] = useState('');
   const [languageSearchText, setLanguageSearchText] = useState('');
   const [contentSearchText, setContentSearchText] = useState('');
 
-  const handleTagSearchTextChange = (event) => {
-    setTagSearchText(event.target.value);
+  const handleInputChange = (setter) => (event) => {
+    setter(event.target.value);
   };
 
-  const handleLanguageSearchTextChange = (event) => {
-    setLanguageSearchText(event.target.value);
-  };
+  const fetchData = useCallback(async (url, setter) => {
+    try {
+      const response = await fetch(url);
+      if (response.ok) {
+        const data = await response.json();
+        setter(data);
+      } else {
+        console.error(`Error: ${response.status} - ${response.statusText}`);
+      }
+    } catch (error) {
+      console.error(`Error fetching data:`, error);
+    }
+  }, []);
 
-  const handleContentSearchTextChange = (event) => {
-    setContentSearchText(event.target.value);
-  };
+  const handleFetchTagList = useCallback(() => {
+    fetchData(`${API_URL}/api/v1/text/findTextSortedByTag/${tagSearchText}`, setTagList);
+  }, [fetchData, tagSearchText]);
+
+  const handleFetchLanguageList = useCallback(() => {
+    fetchData(`${API_URL}/api/v1/text/findTextSortedByLanguage/${languageSearchText}`, setLanguageList);
+  }, [fetchData, languageSearchText]);
+
+  const handleFetchContentList = useCallback(() => {
+    fetchData(`${API_URL}/api/v1/text/getTextByContent/${contentSearchText}`, setContentData);
+  }, [fetchData, contentSearchText]);
 
   const handleKeyPress = (event, fetchFunction) => {
     if (event.key === 'Enter') {
@@ -90,112 +105,70 @@ const SearchPage = () => {
     }
   };
 
-  const fetchTagList = async () => {
-    try {
-      const response = await fetch(`${API_URL}/api/v1/text/findTextSortedByTag/${tagSearchText}`);
-      if (response.ok) {
-        const data = await response.json();
-        setTagList(data);
-      } else {
-        console.error(`Error: ${response.status} - ${response.statusText}`);
-      }
-    } catch (error) {
-      console.error('Error fetching tag list:', error);
-    }
-  };
-
-  const fetchLanguageList = async () => {
-    try {
-      const response = await fetch(`${API_URL}/api/v1/text/findTextSortedByLanguage/${languageSearchText}`);
-      if (response.ok) {
-        const data = await response.json();
-        setLanguageList(data);
-      } else {
-        console.error(`Error: ${response.status} - ${response.statusText}`);
-      }
-    } catch (error) {
-      console.error('Error fetching language list:', error);
-    }
-  };
-
-  const fetchContentList = async () => {
-    try {
-      const response = await fetch(`${API_URL}/api/v1/text/getTextByContent/${contentSearchText}`);
-      if (response.ok) {
-        const data = await response.json();
-        setContent(data.content);
-        setLanguage(data.language || {});
-        setTags(data.tags || []);
-      } else {
-        console.error(`Error: ${response.status} - ${response.statusText}`);
-      }
-    } catch (error) {
-      console.error('Error fetching content list:', error);
-    }
-  };
-
   return (
-    <Container>
-      <Paper elevation={3} style={{ padding: '50px 20px', width: 600, margin: '20px auto' }}>
-        <h1 style={{ color: theme.palette.primary.main }}>Text List Sorted by Tag</h1>
-        <InputGroup>
-          <input
-            type="text"
-            value={tagSearchText}
-            onChange={handleTagSearchTextChange}
-            onKeyPress={(event) => handleKeyPress(event, fetchTagList)}
-            placeholder="Search by tag..."
-          />
-          <button onClick={fetchTagList}>Find</button>
-        </InputGroup>
-        <ul>
-          {tagList.map((content, index) => (
-            <ListItem key={index}>{content}</ListItem>
-          ))}
-        </ul>
-      </Paper>
+    <ThemeProvider theme={theme}>
+      <Container>
+        <Paper elevation={3} style={{ padding: '50px 20px', width: 600, margin: '20px auto' }}>
+          <Title>Text List Sorted by Tag</Title>
+          <InputGroup>
+            <input
+              type="text"
+              value={tagSearchText}
+              onChange={handleInputChange(setTagSearchText)}
+              onKeyPress={(event) => handleKeyPress(event, handleFetchTagList)}
+              placeholder="Search by tag..."
+            />
+            <button onClick={handleFetchTagList}>Find</button>
+          </InputGroup>
+          <ul>
+            {tagList.map((content, index) => (
+              <ListItem key={index}>{content}</ListItem>
+            ))}
+          </ul>
+        </Paper>
 
-      <Paper elevation={3} style={{ padding: '50px 20px', width: 600, margin: '20px auto' }}>
-        <h1 style={{ color: theme.palette.primary.main }}>Text List Sorted by Language</h1>
-        <InputGroup>
-          <input
-            type="text"
-            value={languageSearchText}
-            onChange={handleLanguageSearchTextChange}
-            onKeyPress={(event) => handleKeyPress(event, fetchLanguageList)}
-            placeholder="Search by language..."
-          />
-          <button onClick={fetchLanguageList}>Find</button>
-        </InputGroup>
-        <ul>
-          {languageList.map((content, index) => (
-            <ListItem key={index}>{content}</ListItem>
-          ))}
-        </ul>
-      </Paper>
+        <Paper elevation={3} style={{ padding: '50px 20px', width: 600, margin: '20px auto' }}>
+          <Title>Text List Sorted by Language</Title>
+          <InputGroup>
+            <input
+              type="text"
+              value={languageSearchText}
+              onChange={handleInputChange(setLanguageSearchText)}
+              onKeyPress={(event) => handleKeyPress(event, handleFetchLanguageList)}
+              placeholder="Search by language..."
+            />
+            <button onClick={handleFetchLanguageList}>Find</button>
+          </InputGroup>
+          <ul>
+            {languageList.map((content, index) => (
+              <ListItem key={index}>{content}</ListItem>
+            ))}
+          </ul>
+        </Paper>
 
-      <Paper elevation={3} style={{ padding: '50px 20px', width: 600, margin: '20px auto' }}>
-        <h1 style={{ color: theme.palette.primary.main }}>Text List by Content</h1>
-        <InputGroup>
-          <input
-            type="text"
-            value={contentSearchText}
-            onChange={handleContentSearchTextChange}
-            onKeyPress={(event) => handleKeyPress(event, fetchContentList)}
-            placeholder="Search by content..."
-          />
-          <button onClick={fetchContentList}>Find</button>
-        </InputGroup>
-        <ul>
-          <ListItem>Content: {content}</ListItem>
-          <ListItem>Language: {language ? language.name : ''}</ListItem>
-          <ListItem>Tags: {tags.length > 0 ? tags.map((tag) => tag.name).join(', ') : ''}</ListItem>
-        </ul>
-      </Paper>
-      <Footer>
-        <p>&copy; 2024 Определитель языка текста. Все права защищены.</p>
-      </Footer>
-    </Container>
+        <Paper elevation={3} style={{ padding: '50px 20px', width: 600, margin: '20px auto' }}>
+          <Title>Text List by Content</Title>
+          <InputGroup>
+            <input
+              type="text"
+              value={contentSearchText}
+              onChange={handleInputChange(setContentSearchText)}
+              onKeyPress={(event) => handleKeyPress(event, handleFetchContentList)}
+              placeholder="Search by content..."
+            />
+            <button onClick={handleFetchContentList}>Find</button>
+          </InputGroup>
+          <ul>
+            <ListItem>Content: {contentData.content}</ListItem>
+            <ListItem>Language: {contentData.language?.name || ''}</ListItem>
+            <ListItem>Tags: {contentData.tags.length > 0 ? contentData.tags.map((tag) => tag.name).join(', ') : ''}</ListItem>
+          </ul>
+        </Paper>
+        <Footer>
+          <p>&copy; 2024 Определитель языка текста. Все права защищены.</p>
+        </Footer>
+      </Container>
+    </ThemeProvider>
   );
 };
 

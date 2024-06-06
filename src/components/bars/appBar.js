@@ -9,16 +9,16 @@ import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 import { useNavigate } from 'react-router-dom';
 
-export default function Appbar() {
+const Appbar = () => {
   const [anchorEl, setAnchorEl] = React.useState(null);
   const open = Boolean(anchorEl);
   const navigate = useNavigate();
 
-  const handleClick = (event) => {
+  const handleMenuOpen = (event) => {
     setAnchorEl(event.currentTarget);
   };
 
-  const handleClose = (page) => {
+  const handleMenuClose = (page) => {
     setAnchorEl(null);
     if (page) {
       navigate(`/${page.toLowerCase()}`);
@@ -34,7 +34,7 @@ export default function Appbar() {
             color="inherit"
             aria-label="menu"
             sx={{ mr: 2 }}
-            onClick={handleClick}
+            onClick={handleMenuOpen}
             aria-controls={open ? 'basic-menu' : undefined}
             aria-haspopup="true"
             aria-expanded={open ? 'true' : undefined}
@@ -45,14 +45,16 @@ export default function Appbar() {
             id="basic-menu"
             anchorEl={anchorEl}
             open={open}
-            onClose={() => handleClose(null)}
+            onClose={() => handleMenuClose(null)}
             MenuListProps={{
               'aria-labelledby': 'basic-button',
             }}
           >
-            <MenuItem onClick={() => handleClose('home')}>Home</MenuItem>
-            <MenuItem onClick={() => handleClose('text')}>Text</MenuItem>
-            <MenuItem onClick={() => handleClose('search')}>Search</MenuItem>
+            {['Home', 'Text', 'Search'].map((page) => (
+              <MenuItem key={page} onClick={() => handleMenuClose(page)}>
+                {page}
+              </MenuItem>
+            ))}
           </Menu>
           <Typography variant="h6" noWrap sx={{ flexGrow: 1, textAlign: 'center' }}>
             Language Recognizer
@@ -61,4 +63,6 @@ export default function Appbar() {
       </AppBar>
     </Box>
   );
-}
+};
+
+export default Appbar;
