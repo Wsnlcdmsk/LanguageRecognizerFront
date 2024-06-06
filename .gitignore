@@ -21,7 +21,3 @@
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
-
-/src/components/bars
-/src/components/pages/homePage.js
-/src/components/pages/searchPage.js
