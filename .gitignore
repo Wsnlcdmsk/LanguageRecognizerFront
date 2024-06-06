@@ -24,3 +24,4 @@ yarn-error.log*
 
 /pages/searchPage.js
 /pages/textPage.js
+/bars/appBar
